@@ -1,0 +1,79 @@
+.social-share {
+  position: relative;
+  display: inline-block;
+}
+
+.share-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.share-toggle-btn:hover {
+  border-color: #007bff;
+  background: white;
+}
+
+.share-icon {
+  font-size: 1.1rem;
+}
+
+.share-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 0.5rem;
+  z-index: 1000;
+  min-width: 150px;
+  margin-top: 0.5rem;
+}
+
+.share-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 5px;
+  transition: background 0.3s;
+  font-size: 0.9rem;
+}
+
+.share-option:hover {
+  background: #f8f9fa;
+}
+
+.platform-icon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .share-options {
+    right: auto;
+    left: 0;
+    min-width: 140px;
+  }
+
+  .share-option {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+}
