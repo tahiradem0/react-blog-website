@@ -8,7 +8,7 @@ import PostBlog from './pages/PostBlog';
 import EditBlog from './pages/EditBlog';
 import Login from './pages/Login';
 import OAuthSuccess from './pages/OAuthSuccess';
-// import Signup from './pages/Signup';
+import Signup from './pages/Signup';
 import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import './styles/App.css';
@@ -24,7 +24,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/blog/:id" element={<BlogDetail />} />
               <Route path="/login" element={<Login />} />
-              {/* <Route path="/signup" element={<Signup />} /> */}
+              <Route path="/signup" element={<Signup />} />
               <Route path="/contact" element={<Contact />} />
               
               {/* Protected Routes */}

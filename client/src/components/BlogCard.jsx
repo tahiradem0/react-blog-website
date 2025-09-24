@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './BlogCard.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faHeart, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const BlogCard = ({ blog }) => {
   const formatDate = (dateString) => {
@@ -32,7 +34,7 @@ const BlogCard = ({ blog }) => {
         )}
         
         <div className="blog-card-content">
-          <div className="blog-card-category">{blog.category}</div>
+          <div className="blog-card-category"># {blog.category}</div>
           <h3 className="blog-card-title">{truncateText(blog.title, 60)}</h3>
           <p className="blog-card-description">
             {truncateText(blog.description, 120)}
@@ -40,12 +42,11 @@ const BlogCard = ({ blog }) => {
           
           <div className="blog-card-meta">
             <div className="blog-card-author">
-              <span className="author-avatar">👤</span>
-              <span>{blog.author?.name || 'Unknown Author'}</span>
+              <span>By {blog.author?.name || 'Unknown Author'}</span>
             </div>
             <div className="blog-card-stats">
-              <span className="likes">❤️ {blog.likes?.length || 0}</span>
-              <span className="comments">💬 {blog.comments?.length || 0}</span>
+              <span className="likes"><FontAwesomeIcon icon={faHeart}/> {blog.likes?.length || 0}</span>
+              <span className="comments"><FontAwesomeIcon icon={faComment}/> {blog.comments?.length || 0}</span>
             </div>
           </div>
           

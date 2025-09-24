@@ -26,9 +26,11 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          📝 BlogSpace
+          Coding Journal
         </Link>
 
+        {/* <span className="nav-user">Hello, {user.name}</span> */}
+        
         <div className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)}>
             Home
@@ -42,7 +44,6 @@ const Navbar = () => {
               <Link to="/post" className="nav-link" onClick={() => setIsMenuOpen(false)}>
                 Write Blog
               </Link>
-              <span className="nav-user">Hello, {user.name}</span>
               <button onClick={handleLogout} className="nav-btn nav-btn-logout">
                 Logout
               </button>
@@ -69,7 +70,6 @@ const Navbar = () => {
         </div>
 
         <div className="nav-toggle" onClick={toggleMenu}>
-          <span className="bar"></span>
           <span className="bar"></span>
           <span className="bar"></span>
         </div>

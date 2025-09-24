@@ -6,11 +6,14 @@
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 2px solid #e9ecef;
-  border-radius: 25px;
+  max-width: 400px;
+  padding: 0.75rem 1rem 0.75rem 2.9rem;
+  border: 1px solid #e9e9ea;
+  border-radius: 7px;
   font-size: 1rem;
+  color: #333;
   transition: all 0.3s ease;
+  box-shadow: 2px 5px 10px 0 #0808081f;
   background: #f8f9fa;
 }
 
@@ -23,7 +26,7 @@
 
 .search-icon {
   position: absolute;
-  left: 1rem;
+  left: 0.8rem;
   top: 50%;
   transform: translateY(-50%);
   color: #6c757d;
@@ -44,6 +47,10 @@
 
 .clear-search:hover {
   color: #333;
+}
+
+.serach_icon{
+  color: #e64c0b;
 }
 
 @media (max-width: 768px) {
