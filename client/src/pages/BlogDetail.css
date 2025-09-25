@@ -319,7 +319,7 @@
   }
 }
 
-.edit-btn{
-  margin-left: 70px;
-  background: transparent;
+.edit-btn-one{
+  position: absolute;
+  right: 20px;
 }

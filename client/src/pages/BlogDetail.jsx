@@ -134,7 +134,7 @@ const BlogDetail = () => {
           {user && blog.author && blog.author._id === user._id && (
             <button 
               onClick={() => navigate(`/edit/${blog._id}`)} 
-              className="edit-btn"
+              className="edit-btn-one"
               title="Edit this blog"
               >
                 ✏️ Edit
