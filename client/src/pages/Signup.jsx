@@ -18,7 +18,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   // Get base URL from environment variable
-  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setFormData({

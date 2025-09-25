@@ -27,7 +27,7 @@ const EditBlog = () => {
   }, [id]);
 
   // Get base URL from environment variable
-  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  const API_BASE_URL = process.env.VITE_REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
   const fetchBlog = async () => {
     try {

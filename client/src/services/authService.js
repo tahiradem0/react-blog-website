@@ -17,7 +17,7 @@ export const getCurrentUser = async () => {
 
 export const googleAuth = () => {
   // Use environment variable for Google OAuth URL
-  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
   window.location.href = `${API_BASE_URL}/auth/google`;
 };
 

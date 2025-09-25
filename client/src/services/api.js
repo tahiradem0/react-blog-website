@@ -1,7 +1,7 @@
+// api.js
 import axios from 'axios';
 
-// For Vite - use environment variable with fallback
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const API = axios.create({
   baseURL: API_BASE_URL,
@@ -11,7 +11,6 @@ const API = axios.create({
   },
 });
 
-// Add token to requests
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -20,7 +19,6 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Error handling
 API.interceptors.response.use(
   (response) => response,
   (error) => {
