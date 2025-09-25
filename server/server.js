@@ -65,21 +65,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+// ✅ Removed serving client build (since client is on Vercel)
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Blog API is running!',
+    environment: process.env.NODE_ENV || 'development'
   });
-} else {
-  app.get('/', (req, res) => {
-    res.json({ 
-      message: 'Blog API is running!',
-      environment: process.env.NODE_ENV || 'development'
-    });
-  });
-}
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
