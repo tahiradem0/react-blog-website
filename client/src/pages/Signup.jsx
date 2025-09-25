@@ -142,7 +142,7 @@ const Signup = () => {
           className="google-auth-btn"
           disabled={loading}
         >
-          <span className="google-icon">🔍</span>
+          <span className="google-icon"></span>
           Continue with Google
         </button>
 

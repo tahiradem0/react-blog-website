@@ -13,13 +13,13 @@
 
 .contact-info h2 {
   font-size: 2.5rem;
-  color: #333;
+  color: #e64c0b;
   margin-bottom: 1rem;
 }
 
 .contact-info > p {
   font-size: 1.1rem;
-  color: #666;
+  color: #7d7676;
   line-height: 1.6;
   margin-bottom: 2rem;
 }
@@ -35,37 +35,45 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1.5rem;
-  background: #f8f9fa;
+  background: transparent;
   border-radius: 10px;
-  border-left: 4px solid #007bff;
 }
 
 .contact-icon {
   font-size: 1.5rem;
-  margin-top: 0.25rem;
+  margin-top: 0.50rem;
 }
 
 .contact-item h4 {
-  color: #333;
+  color: #e64c0b;
   margin-bottom: 0.5rem;
   font-size: 1.1rem;
 }
 
 .contact-item p {
-  color: #666;
+  color: #fff;
   margin: 0;
+}
+.contact-item a {
+  color: #fff;
+  margin: 0;
+  font-weight: 300;
+}
+
+.contact_icon{
+  color: #fff;
 }
 
 .contact-form-container {
-  background: white;
+  background: #333;
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 5px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .contact-form h3 {
   margin-bottom: 1.5rem;
-  color: #333;
+  color: #fff;
   font-size: 1.5rem;
 }
 
@@ -77,14 +85,14 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #333;
+  color: #7d7d7d;
 }
 
 .contact-form input,
 .contact-form textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #e9ecef;
+  border: 1px solid #e9ecef2e;
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
@@ -94,7 +102,7 @@
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #e64c0b;
 }
 
 .contact-form textarea {
@@ -105,13 +113,13 @@
 .char-count {
   text-align: right;
   font-size: 0.8rem;
-  color: #666;
+  color: #7d7d7d;
   margin-top: 0.25rem;
 }
 
 .submit-btn {
   width: 100%;
-  background: #007bff;
+  background: #e64c0b;
   color: white;
   border: none;
   padding: 1rem;
@@ -123,7 +131,7 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #0056b3;
+  background: #e86a35;
 }
 
 .submit-btn:disabled {
@@ -178,4 +186,11 @@
   .contact-item {
     padding: 1rem;
   }
+}
+.copy_right_text{
+  color: #fff;
+  text-align: center;
+  width: 100%;
+  font-size: 13px;
+  margin-top: 30px;
 }

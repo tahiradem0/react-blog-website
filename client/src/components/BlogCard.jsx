@@ -45,8 +45,8 @@ const BlogCard = ({ blog }) => {
               <span>By {blog.author?.name || 'Unknown Author'}</span>
             </div>
             <div className="blog-card-stats">
-              <span className="likes"><FontAwesomeIcon icon={faHeart}/> {blog.likes?.length || 0}</span>
-              <span className="comments"><FontAwesomeIcon icon={faComment}/> {blog.comments?.length || 0}</span>
+              <span className="likes"><FontAwesomeIcon icon={faHeart} className='like_btn_home'/> {blog.likes?.length || 0}</span>
+              <span className="comments"><FontAwesomeIcon icon={faComment} className='comment_btn_home'/> {blog.comments?.length || 0}</span>
             </div>
           </div>
           

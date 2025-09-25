@@ -4,6 +4,7 @@ import { getBlogs } from '../services/blogService';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
 import BlogCard from '../components/BlogCard';
+import Contact from './Contact';
 import './Home.css';
 
 const Home = () => {
@@ -67,7 +68,7 @@ const Home = () => {
     <div className="home-container">
       <div className="home-header">
         <h1>Latest Blog Posts</h1>
-        <p>Discover amazing stories and insights</p>
+        <p>Discover Amazing Journals and Insights with <span>Tahir</span> </p>
       </div>
 
       <div className="filters-container">
@@ -106,6 +107,7 @@ const Home = () => {
           ))}
         </div>
       )}
+      <Contact/>
     </div>
   );
 };

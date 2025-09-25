@@ -63,7 +63,7 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
+      <div className="auth-card login-auth-card">
         <h2>Welcome Back</h2>
         <p>Sign in to your account</p>
 

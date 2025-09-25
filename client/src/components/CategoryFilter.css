@@ -7,21 +7,20 @@
 
 .category-select {
   padding: 0.50rem 1rem;
-  border: 2px solid #e9ecef;
+  border: 1px solid #ffffff3c;
   border-radius: 25px;
-  font-size: 1rem;
-  color: #333;
-  background: #f8f9fa;
+  font-size: 0.8rem;
+  color: #fff;
+  background: #ffffff2b;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 150px;
-  border:1px solid #dbd9d9;
 }
 
 .category-select:focus {
   outline: none;
   border:1px solid #f6733b;
-  background: white;
+  background:#f6733b ;
   box-shadow: 0 0 0 3px #e64d0b0b;
 }
 

@@ -26,7 +26,6 @@ const CommentSection = ({ comments = [] }) => {
         <div key={comment._id || comment.date} className="comment-item">
           <div className="comment-header">
             <div className="comment-author">
-              <span className="comment-avatar">👤</span>
               <span className="comment-author-name">{comment.name || 'Anonymous'}</span>
             </div>
             <span className="comment-date">

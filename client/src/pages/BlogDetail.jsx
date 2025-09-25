@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getBlog, likeBlog, addComment } from '../services/blogService';
 import CommentSection from '../components/CommentSection';
 import SocialShare from '../components/SocialShare';
+import Contact from './Contact';
 import './BlogDetail.css';
 
 const BlogDetail = () => {
@@ -126,25 +127,7 @@ const BlogDetail = () => {
               ← Back to Blogs
             </button>
           </nav>
-          
-          <div className="blog-meta-header">
-            <span className="blog-category">{blog.category}</span>
-            <span className="blog-date">{formatDate(blog.createdAt)}</span>
-          </div>
-          
-          <h1 className="blog-title">{blog.title}</h1>
-          <p className="blog-description">{blog.description}</p>
-          
-          <div className="blog-author">
-            <div className="author-avatar">👤</div>
-            <div className="author-info">
-              <span className="author-name">{blog.author?.name || 'Unknown Author'}</span>
-            </div>
-          </div>
-        </header>
-
-        {/* Blog Image */}
-        {blog.image && (
+          {blog.image && (
           <div className="blog-image-container">
             <img 
               src={`http://localhost:5000/uploads/${blog.image}`} 
@@ -156,6 +139,25 @@ const BlogDetail = () => {
             />
           </div>
         )}
+          
+          <div className="blog-meta-header">
+            <span className="blog-category"># {blog.category}</span>
+            <span className="blog-date">{formatDate(blog.createdAt)}</span>
+          </div>
+          
+          <h1 className="blog-title">{blog.title}</h1>
+          <p className="blog-description">{blog.description}</p>
+          
+          {/* <div className="blog-author">
+            <div className="author-avatar">👤</div>
+            <div className="author-info">
+              <span className="author-name">{blog.author?.name || 'Unknown Author'}</span>
+            </div>
+          </div> */}
+        </header>
+
+        {/* Blog Image */}
+        
 
         {/* Blog Content */}
         <div className="blog-content">
@@ -175,7 +177,7 @@ const BlogDetail = () => {
             >
               <span className="like-icon">{hasLiked ? '❤️' : '🤍'}</span>
               <span className="like-count">{blog.likes?.length || 0}</span>
-              <span className="like-text">{hasLiked ? 'Liked' : 'Like'}</span>
+              <span className="like-text">{hasLiked ? '' : 'Like'}</span>
             </button>
           </div>
 
@@ -229,6 +231,7 @@ const BlogDetail = () => {
           <CommentSection comments={blog.comments} />
         </section>
       </article>
+      <Contact/>
     </div>
   );
 };

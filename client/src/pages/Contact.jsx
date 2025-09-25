@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Contact.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCommentDots, faInbox, faPaperPlane, faPhone, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -67,23 +69,23 @@ const Contact = () => {
           
           <div className="contact-details">
             <div className="contact-item">
-              <span className="contact-icon">📧</span>
+              <span className="contact-icon"><FontAwesomeIcon icon={faPaperPlane} className='contact_icon'/></span>
               <div>
                 <h4>Email</h4>
-                <p>contact@blogspace.com</p>
+                <a href=''>ademt0614@gmail.com</a>
               </div>
             </div>
             
             <div className="contact-item">
-              <span className="contact-icon">🕒</span>
+              <span className="contact-icon"><FontAwesomeIcon icon={faPhone} className='contact_icon'/></span>
               <div>
-                <h4>Response Time</h4>
-                <p>Within 24 hours</p>
+                <h4>Phone</h4>
+                <a href='tel:0978787960'>+251978787960</a>
               </div>
             </div>
             
             <div className="contact-item">
-              <span className="contact-icon">💬</span>
+              <span className="contact-icon"><FontAwesomeIcon icon={faCommentDots} className='contact_icon'/></span>
               <div>
                 <h4>Support</h4>
                 <p>Technical issues & feedback</p>
@@ -144,6 +146,8 @@ const Contact = () => {
             <button type="submit" disabled={loading} className="submit-btn">
               {loading ? 'Sending...' : 'Send Message'}
             </button>
+      <div className='copy_right_text'>copyright @Tahir Adem - 2025</div>
+
           </form>
         </div>
       </div>

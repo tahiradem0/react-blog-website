@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './SocialShare.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faShare, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const SocialShare = ({ url, title, description, image }) => {
   const [showShareOptions, setShowShareOptions] = useState(false);
@@ -62,7 +64,7 @@ const SocialShare = ({ url, title, description, image }) => {
   return (
     <div className="social-share">
       <button onClick={handleNativeShare} className="share-toggle-btn">
-        <span className="share-icon">📤</span>
+        <span className="share-icon"><FontAwesomeIcon icon={faShare} className='share_icon'/></span>
         Share
       </button>
 

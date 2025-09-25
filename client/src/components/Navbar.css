@@ -1,5 +1,5 @@
 .navbar {
-  background: #fff;
+  background: #1b1a18;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   position: fixed;
   top: 15px;
@@ -23,7 +23,7 @@
 .nav-logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #e64c0b;
+  color: #fff;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -38,7 +38,7 @@
 }
 
 .nav-link {
-  color: #333;
+  color: #fff;
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 5px;
@@ -70,22 +70,23 @@
 
 .nav-btn-login {
   background: transparent;
-  color: #007bff;
-  border: 1px solid #007bff;
+  color: #e64c0b;
+  border: 1px solid #e64c0b;
 }
 
 .nav-btn-login:hover {
-  background: #007bff;
+  background: #f46325;
   color: white;
 }
 
 .nav-btn-signup {
-  background: #007bff;
+  background: #e64c0b;
   color: white;
 }
 
 .nav-btn-signup:hover {
-  background: #0056b3;
+  background: #e64c0b;
+  color: #fff;
 }
 
 .nav-btn-logout {
