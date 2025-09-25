@@ -1,46 +1,41 @@
 import React, { useState } from 'react';
 import './SocialShare.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faShare, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faShare } from '@fortawesome/free-solid-svg-icons';
 
 const SocialShare = ({ url, title, description, image }) => {
   const [showShareOptions, setShowShareOptions] = useState(false);
 
-  const shareData = {
-    title: title,
-    text: description,
-    url: url,
-  };
-
+  // Native share (mobile)
   const handleNativeShare = async () => {
-  if (navigator.canShare && navigator.canShare({ files: [] }) && image) {
-    try {
-      const response = await fetch(image);
-      const blob = await response.blob();
-      const file = new File([blob], 'blog-image.png', { type: blob.type });
-      
-      await navigator.share({
-        title,
-        text: description,
-        url,
-        files: [file],
-      });
-    } catch (error) {
-      console.log('Error sharing with image:', error);
+    if (navigator.canShare && image) {
+      try {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const file = new File([blob], 'blog-image.jpg', { type: blob.type });
+        
+        await navigator.share({
+          title,
+          text: description,
+          url,
+          files: [file],
+        });
+      } catch (error) {
+        console.log('Error sharing with image:', error);
+        setShowShareOptions(!showShareOptions);
+      }
+    } else if (navigator.share) {
+      try {
+        await navigator.share({ title, text: description, url });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
       setShowShareOptions(!showShareOptions);
     }
-  } else if (navigator.share) {
-    try {
-      await navigator.share({ title, text: description, url });
-    } catch (error) {
-      console.log('Error sharing:', error);
-    }
-  } else {
-    setShowShareOptions(!showShareOptions);
-  }
-};
+  };
 
-
+  // Social platform share
   const shareToPlatform = (platform) => {
     let shareUrl = '';
     
@@ -68,6 +63,7 @@ const SocialShare = ({ url, title, description, image }) => {
     setShowShareOptions(false);
   };
 
+  // Copy link to clipboard
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -81,7 +77,9 @@ const SocialShare = ({ url, title, description, image }) => {
   return (
     <div className="social-share">
       <button onClick={handleNativeShare} className="share-toggle-btn">
-        <span className="share-icon"><FontAwesomeIcon icon={faShare} className='share_icon'/></span>
+        <span className="share-icon">
+          <FontAwesomeIcon icon={faShare} className='share_icon'/>
+        </span>
         Share
       </button>
 
