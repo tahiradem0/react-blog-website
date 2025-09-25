@@ -6,16 +6,20 @@ const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost
 const API = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
+// ✅ Only set JSON header when sending JSON
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
   if (token) {
     req.headers.Authorization = `Bearer ${token}`;
   }
+
+  // If request body is FormData, don't set Content-Type (browser will handle)
+  if (!(req.data instanceof FormData)) {
+    req.headers['Content-Type'] = 'application/json';
+  }
+
   return req;
 });
 

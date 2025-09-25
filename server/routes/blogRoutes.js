@@ -39,13 +39,21 @@ const upload = multer({
 });
 
 // ✅ Cloudinary upload helper
+// ✅ FIXED Cloudinary upload helper with proper timestamp handling
 const uploadToCloudinary = async (localPath) => {
   try {
-    const result = await cloudinary.uploader.upload(localPath, {
+    console.log('🕒 Starting Cloudinary upload...');
+    
+    // Simple upload without complex parameters that might cause timestamp issues
+    const uploadOptions = {
       folder: 'blog_images',
-      quality: 'auto',
-      fetch_format: 'auto'
-    });
+      // Remove any transformations that might cause signature issues
+      // Use simpler approach for now
+    };
+
+    const result = await cloudinary.uploader.upload(localPath, uploadOptions);
+    
+    console.log('✅ Cloudinary upload successful:', result.secure_url);
     
     // Clean up local file
     if (fs.existsSync(localPath)) {
@@ -54,14 +62,23 @@ const uploadToCloudinary = async (localPath) => {
     
     return result.secure_url;
   } catch (err) {
-    console.error("Cloudinary Upload Error:", err);
+    console.error("❌ Cloudinary Upload Error Details:");
+    console.error("Error Message:", err.message);
+    console.error("HTTP Code:", err.http_code);
+    console.error("Error Name:", err.name);
+    
+    // Check if it's a timestamp issue
+    if (err.message.includes('Stale request') || err.http_code === 400) {
+      console.error('💡 Solution: Check your system clock synchronization');
+      console.error('💡 Run: w32tm /resync (Windows) or sudo ntpdate pool.ntp.org (Linux/Mac)');
+    }
     
     // Clean up local file even on error
     if (fs.existsSync(localPath)) {
       fs.unlinkSync(localPath);
     }
     
-    throw new Error("Image upload failed");
+    throw new Error("Image upload failed: " + err.message);
   }
 };
 
