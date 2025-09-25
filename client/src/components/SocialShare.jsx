@@ -13,16 +13,33 @@ const SocialShare = ({ url, title, description, image }) => {
   };
 
   const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (error) {
-        console.log('Error sharing:', error);
-      }
-    } else {
+  if (navigator.canShare && navigator.canShare({ files: [] }) && image) {
+    try {
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const file = new File([blob], 'blog-image.png', { type: blob.type });
+      
+      await navigator.share({
+        title,
+        text: description,
+        url,
+        files: [file],
+      });
+    } catch (error) {
+      console.log('Error sharing with image:', error);
       setShowShareOptions(!showShareOptions);
     }
-  };
+  } else if (navigator.share) {
+    try {
+      await navigator.share({ title, text: description, url });
+    } catch (error) {
+      console.log('Error sharing:', error);
+    }
+  } else {
+    setShowShareOptions(!showShareOptions);
+  }
+};
+
 
   const shareToPlatform = (platform) => {
     let shareUrl = '';
