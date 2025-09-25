@@ -228,15 +228,16 @@
 .login-prompt {
   text-align: center;
   padding: 2rem;
-  background: #f8f9fa;
+  background: #333;
   border-radius: 10px;
+  color: #fff;
   margin-bottom: 2rem;
 }
 
 .login-link {
   background: none;
   border: none;
-  color: #007bff;
+  color: #fff;
   cursor: pointer;
   text-decoration: underline;
   font-weight: 600;
