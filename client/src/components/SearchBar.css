@@ -8,20 +8,19 @@
   width: 100%;
   max-width: 400px;
   padding: 0.75rem 1rem 0.75rem 2.9rem;
-  border: 1px solid #e9e9ea;
+  border: 1px solid #e9e9ea49;
   border-radius: 7px;
   font-size: 1rem;
-  color: #333;
+  color: #fff;
   transition: all 0.3s ease;
   box-shadow: 2px 5px 10px 0 #0808081f;
-  background: #f8f9fa;
+  background: #f8f9fa22;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #007bff;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+  border-color: #e64d0b56;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .search-icon {
