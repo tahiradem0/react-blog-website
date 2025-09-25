@@ -118,7 +118,7 @@ const BlogDetail = () => {
     );
   }
 
-  const hasLiked = user && blog.likes.includes(user._id);
+  const hasLiked = user && Array.isArray(blog.likes) && blog.likes.includes(user._id);
   const blogUrl = `${window.location.origin}/blog/${blog._id}`;
 
   return (
@@ -180,7 +180,9 @@ const BlogDetail = () => {
               className={`like-btn ${hasLiked ? 'liked' : ''}`}
             >
               <span className="like-icon">{hasLiked ? '❤️' : '🤍'}</span>
-              <span className="like-count">{blog.likes?.length || 0}</span>
+              <span className="like-count">
+              {Array.isArray(blog.likes) ? blog.likes.length : blog.likes || 0}
+            </span>
               <span className="like-text">{hasLiked ? '' : 'Like'}</span>
             </button>
           </div>

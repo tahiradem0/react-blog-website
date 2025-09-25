@@ -147,10 +147,7 @@
   font-size: 0.9rem;
 }
 
-.like-btn:hover:not(:disabled) {
-  border-color: #fff;
-  background: white;
-}
+
 
 .like-btn.liked {
   color: #dc3545;
