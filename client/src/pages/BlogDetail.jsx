@@ -23,6 +23,9 @@ const BlogDetail = () => {
     fetchBlog();
   }, [id]);
 
+  // Get base URL from environment variable
+  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
   const fetchBlog = async () => {
     try {
       setLoading(true);
@@ -130,7 +133,7 @@ const BlogDetail = () => {
           {blog.image && (
           <div className="blog-image-container">
             <img 
-              src={`http://localhost:5000/uploads/${blog.image}`} 
+              src={`${API_BASE_URL}/uploads/${blog.image}`} 
               alt={blog.title}
               className="blog-image"
               onError={(e) => {
@@ -147,17 +150,7 @@ const BlogDetail = () => {
           
           <h1 className="blog-title">{blog.title}</h1>
           <p className="blog-description">{blog.description}</p>
-          
-          {/* <div className="blog-author">
-            <div className="author-avatar">👤</div>
-            <div className="author-info">
-              <span className="author-name">{blog.author?.name || 'Unknown Author'}</span>
-            </div>
-          </div> */}
         </header>
-
-        {/* Blog Image */}
-        
 
         {/* Blog Content */}
         <div className="blog-content">
@@ -185,7 +178,7 @@ const BlogDetail = () => {
             url={blogUrl}
             title={blog.title}
             description={blog.description}
-            image={blog.image ? `http://localhost:5000/uploads/${blog.image}` : ''}
+            image={blog.image ? `${API_BASE_URL}/uploads/${blog.image}` : ''}
           />
         </div>
 

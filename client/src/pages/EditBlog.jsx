@@ -26,6 +26,9 @@ const EditBlog = () => {
     fetchBlog();
   }, [id]);
 
+  // Get base URL from environment variable
+  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
   const fetchBlog = async () => {
     try {
       setLoading(true);
@@ -46,7 +49,7 @@ const EditBlog = () => {
       
       if (blogData.image) {
         setCurrentImage(blogData.image);
-        setImagePreview(`http://localhost:5000/uploads/${blogData.image}`);
+        setImagePreview(`${API_BASE_URL}/uploads/${blogData.image}`);
       }
     } catch (error) {
       setError('Blog not found');

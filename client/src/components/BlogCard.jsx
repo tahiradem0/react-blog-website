@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './BlogCard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faHeart, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faHeart } from '@fortawesome/free-solid-svg-icons';
 
 const BlogCard = ({ blog }) => {
   const formatDate = (dateString) => {
@@ -18,13 +18,17 @@ const BlogCard = ({ blog }) => {
     return text.substr(0, maxLength) + '...';
   };
 
+  // Get base URL from environment variable
+  const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
+
   return (
     <article className="blog-card">
       <Link to={`/blog/${blog._id}`} className="blog-card-link">
         {blog.image && (
           <div className="blog-card-image">
             <img 
-              src={`http://localhost:5000/uploads/${blog.image}`} 
+              src={`${API_BASE_URL}/uploads/${blog.image}`} 
               alt={blog.title}
               onError={(e) => {
                 e.target.src = '/default-blog.png';

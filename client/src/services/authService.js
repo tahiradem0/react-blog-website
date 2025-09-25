@@ -16,15 +16,13 @@ export const getCurrentUser = async () => {
 };
 
 export const googleAuth = () => {
-  // Redirect to backend Google OAuth endpoint
-  window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+  // Use environment variable for Google OAuth URL
+  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  window.location.href = `${API_BASE_URL}/auth/google`;
 };
 
 export const handleOAuthSuccess = async (token) => {
-  // Store token
   localStorage.setItem('token', token);
-  
-  // Get user data
   const response = await API.get('/auth/oauth/success');
   return response.data;
 };

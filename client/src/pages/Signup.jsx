@@ -17,6 +17,9 @@ const Signup = () => {
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
+  // Get base URL from environment variable
+  const API_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -138,11 +141,11 @@ const Signup = () => {
 
         <button 
           type="button" 
-          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'} 
+          onClick={() => window.location.href = `${API_BASE_URL}/auth/google`} 
           className="google-auth-btn"
           disabled={loading}
         >
-          <span className="google-icon"></span>
+          <span className="google-icon">🔍</span>
           Continue with Google
         </button>
 
