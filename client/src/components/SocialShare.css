@@ -81,3 +81,28 @@
     font-size: 0.85rem;
   }
 }
+
+.share-preview {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.share-preview-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.share-preview-title {
+  font-size: 1.1rem;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.share-preview-description {
+  font-size: 0.95rem;
+  color: #555;
+}

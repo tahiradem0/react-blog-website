@@ -85,6 +85,16 @@ const SocialShare = ({ url, title, description, image }) => {
 
       {showShareOptions && (
         <div className="share-options">
+          {/* Blog preview */}
+          {image && (
+            <div className="share-preview">
+              <img src={image} alt={title} className="share-preview-image" />
+              <h4 className="share-preview-title">{title}</h4>
+              <p className="share-preview-description">{description}</p>
+            </div>
+          )}
+
+          {/* Social Buttons */}
           <button onClick={() => shareToPlatform('twitter')} className="share-option">
             <span className="platform-icon">🐦</span>
             Twitter
