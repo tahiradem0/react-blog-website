@@ -323,3 +323,8 @@
   position: absolute;
   right: 20px;
 }
+
+.blog-text a{
+  color: #e64c0b;
+  font-style: italic;
+}
