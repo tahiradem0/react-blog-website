@@ -71,6 +71,10 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+#message{
+  border: 1px solid #ffffff13;
+}
+
 .contact-form h3 {
   margin-bottom: 1.5rem;
   color: #fff;
@@ -81,18 +85,19 @@
   margin-bottom: 1.5rem;
 }
 
+
 .contact-form label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #7d7d7d;
+  color: #fff !important;
 }
 
 .contact-form input,
 .contact-form textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e9ecef2e;
+  border: 1px solid #ffffff13;
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
@@ -102,7 +107,7 @@
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  border-color: #e64c0b;
+  border-color: #e64d0b2f;
 }
 
 .contact-form textarea {
@@ -193,4 +198,8 @@
   width: 100%;
   font-size: 13px;
   margin-top: 30px;
+}
+
+.form-group input{
+  background: transparent;
 }

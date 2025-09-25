@@ -321,3 +321,8 @@
     line-height: 1.6;
   }
 }
+
+.edit-btn{
+  margin-left: 70px;
+  background: transparent;
+}

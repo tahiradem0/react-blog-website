@@ -130,6 +130,16 @@ const BlogDetail = () => {
             <button onClick={() => navigate('/')} className="back-btn">
               ← Back to Blogs
             </button>
+            {/* Edit Blog Button */}
+          {user && blog.author && blog.author._id === user._id && (
+            <button 
+              onClick={() => navigate(`/edit/${blog._id}`)} 
+              className="edit-btn"
+              title="Edit this blog"
+              >
+                ✏️ Edit
+              </button>
+            )}
           </nav>
           {blog.image && (
           <div className="blog-image-container">
