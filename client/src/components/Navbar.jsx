@@ -26,7 +26,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          Coding Journal
+          My- Journal
         </Link>
 
         {/* <span className="nav-user">Hello, {user.name}</span> */}
