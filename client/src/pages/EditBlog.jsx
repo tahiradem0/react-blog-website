@@ -246,6 +246,8 @@ const EditBlog = () => {
             </select>
           </div>
 
+<code>&lt;img src="xxxxxx" alt="xxxxx"&gt;</code>
+
           {/* Content */}
           <div className="form-group">
             <label htmlFor="content">Blog Content *</label>
