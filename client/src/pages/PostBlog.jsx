@@ -181,6 +181,8 @@ const PostBlog = () => {
             </select>
           </div>
 
+<code>&lt;img src="myimage.jpg" alt="Example"&gt;</code>
+
           {/* Content */}
           <div className="form-group">
             <label htmlFor="content">Blog Content *</label>
