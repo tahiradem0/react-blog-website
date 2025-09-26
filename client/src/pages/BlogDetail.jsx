@@ -143,7 +143,7 @@ const BlogDetail = () => {
           {blog.image && (
           <div className="blog-image-container">
             <img 
-              src={`${API_BASE_URL}/uploads/${blog.image}`} 
+              src={`${blog.image.url}`}
               alt={blog.title}
               className="blog-image"
               onError={(e) => {

@@ -49,7 +49,7 @@ const EditBlog = () => {
       
       if (blogData.image) {
         setCurrentImage(blogData.image);
-        setImagePreview(`${API_BASE_URL}/uploads/${blogData.image}`);
+        setImagePreview(`${blogData.image.url}`);
       }
     } catch (error) {
       setError('Blog not found');

@@ -36,9 +36,15 @@ const blogSchema = new mongoose.Schema({
     required: true
   },
   image: {
+  url: {
     type: String,
     default: ''
   },
+  public_id: {
+    type: String,
+    default: ''
+  }
+},
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

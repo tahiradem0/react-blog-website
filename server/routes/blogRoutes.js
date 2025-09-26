@@ -1,126 +1,85 @@
 const express = require('express');
 const multer = require('multer');
+const path = require('path');
+const cloudinary = require('cloudinary').v2;
 const Blog = require('../models/Blog');
 const authMiddleware = require('../middlewares/authMiddleware');
-const cloudinary = require('../config/cloudinary');
 
 const router = express.Router();
 
-// Multer memory storage for Cloudinary
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Create blog - Fixed version
-router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
-  try {
-    const { title, description, content, category } = req.body;
-    let imageId = '';
+// Configure multer for temporary storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'tmp/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
 
-    if (req.file) {
-      // Convert to promise-based upload
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'blogs' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(req.file.buffer);
-      });
-      imageId = result.public_id;
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
     }
+  }
+});
 
-    const blog = new Blog({
-      title,
-      description,
-      content,
-      category,
-      image: imageId,
-      author: req.user._id
+// Helper function to upload image to Cloudinary
+const uploadToCloudinary = async (filePath) => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: 'blog-images',
+      transformation: [
+        { width: 800, height: 600, crop: 'limit' },
+        { quality: 'auto' }
+      ]
     });
-
-    await blog.save();
-    await blog.populate('author', 'name');
-
-    res.status(201).json({ message: 'Blog created successfully', blog });
+    return result;
   } catch (error) {
-    console.error('Blog creation error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    throw new Error('Failed to upload image to Cloudinary');
   }
-});
+};
 
-
-// Update blog - Fixed version
-router.put('/:id', authMiddleware, upload.single('image'), async (req, res) => {
+// Helper function to delete image from Cloudinary
+const deleteFromCloudinary = async (image) => {
   try {
-    const blog = await Blog.findById(req.params.id);
-    if (!blog) return res.status(404).json({ message: 'Blog not found' });
-    if (blog.author.toString() !== req.user._id.toString())
-      return res.status(403).json({ message: 'Not authorized to edit this blog' });
-
-    const { title, description, content, category, removeImage } = req.body;
-
-    blog.title = title || blog.title;
-    blog.description = description || blog.description;
-    blog.content = content || blog.content;
-    blog.category = category || blog.category;
-
-    // Handle image update
-    if (req.file) {
-      // Delete old image if exists
-      if (blog.image) {
-        try {
-          await cloudinary.uploader.destroy(blog.image);
-        } catch (deleteError) {
-          console.log('Error deleting old image:', deleteError);
-          // Continue with upload even if deletion fails
-        }
-      }
-      
-      // Upload new image
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'blogs' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(req.file.buffer);
-      });
-      blog.image = result.public_id;
-    } else if (removeImage === 'true' || removeImage === true) {
-      if (blog.image) {
-        try {
-          await cloudinary.uploader.destroy(blog.image);
-        } catch (deleteError) {
-          console.log('Error deleting image:', deleteError);
-        }
-      }
-      blog.image = '';
+    if (!image) return;
+    
+    if (typeof image === 'object' && image.public_id) {
+      // New format: { url: '', public_id: '' }
+      await cloudinary.uploader.destroy(image.public_id);
+    } else if (typeof image === 'string' && image.includes('cloudinary')) {
+      // Old format: string URL - try to extract public_id
+      const urlParts = image.split('/');
+      const publicIdWithExtension = urlParts[urlParts.length - 1];
+      const publicId = publicIdWithExtension.split('.')[0];
+      const fullPublicId = `blog-images/${publicId}`;
+      await cloudinary.uploader.destroy(fullPublicId);
     }
-
-    await blog.save();
-    await blog.populate('author', 'name');
-
-    res.json({ message: 'Blog updated successfully', blog });
   } catch (error) {
-    console.error('Blog update error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error deleting image from Cloudinary:', error);
   }
-});
+};
 
-// Serve images to frontend (keeps URL pattern the same)
-router.get('/uploads/:imageId', (req, res) => {
-  const { imageId } = req.params;
-  if (!imageId) return res.status(404).send('Image not found');
-
-  const url = cloudinary.url(imageId, { secure: true });
-  res.redirect(url); // frontend calls /uploads/:imageId
-});
-
-// Get all blogs
+// Get all blogs with search and category filter
 router.get('/', async (req, res) => {
   try {
     const { search, category } = req.query;
@@ -143,6 +102,7 @@ router.get('/', async (req, res) => {
 
     res.json(blogs);
   } catch (error) {
+    console.error('Error fetching blogs:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -154,11 +114,84 @@ router.get('/:id', async (req, res) => {
       .populate('author', 'name')
       .populate('comments.user', 'name');
 
-    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
 
     res.json(blog);
   } catch (error) {
+    console.error('Error fetching blog:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Create blog (protected)
+router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
+  try {
+    console.log('Request received for blog creation');
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    console.log('User:', req.user);
+
+    const { title, description, content, category } = req.body;
+
+    // Validate required fields
+    if (!title || !description || !content || !category) {
+      console.log('Missing required fields');
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const blogData = {
+      title,
+      description,
+      content,
+      category,
+      author: req.user._id
+    };
+
+    // If image was uploaded, upload to Cloudinary
+    if (req.file) {
+      console.log('Image file detected, uploading to Cloudinary...');
+      try {
+        const result = await uploadToCloudinary(req.file.path);
+        console.log('Cloudinary upload result:', result);
+        
+        blogData.image = {
+          url: result.secure_url,
+          public_id: result.public_id
+        };
+      } catch (uploadError) {
+        console.error('Error uploading to Cloudinary:', uploadError);
+        return res.status(500).json({ message: 'Error uploading image' });
+      }
+    } else {
+      console.log('No image file detected');
+    }
+
+    const blog = new Blog(blogData);
+    await blog.save();
+    await blog.populate('author', 'name');
+
+    console.log('Blog created successfully');
+    res.status(201).json({
+      message: 'Blog created successfully',
+      blog
+    });
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    
+    // Clean up uploaded file if there was an error
+    if (req.file) {
+      const fs = require('fs');
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) console.error('Error deleting temp file:', unlinkError);
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
@@ -166,9 +199,13 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/like', authMiddleware, async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
-    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+    
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
 
     const hasLiked = blog.likes.includes(req.user._id);
+    
     if (hasLiked) {
       blog.likes = blog.likes.filter(like => like.toString() !== req.user._id.toString());
     } else {
@@ -177,8 +214,12 @@ router.post('/:id/like', authMiddleware, async (req, res) => {
 
     await blog.save();
 
-    res.json({ message: hasLiked ? 'Blog unliked' : 'Blog liked', likes: blog.likes.length });
+    res.json({
+      message: hasLiked ? 'Blog unliked' : 'Blog liked',
+      likes: blog.likes.length
+    });
   } catch (error) {
+    console.error('Error liking blog:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -187,15 +228,149 @@ router.post('/:id/like', authMiddleware, async (req, res) => {
 router.post('/:id/comment', authMiddleware, async (req, res) => {
   try {
     const { text } = req.body;
-    const blog = await Blog.findById(req.params.id);
-    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+    
+    if (!text) {
+      return res.status(400).json({ message: 'Comment text is required' });
+    }
 
-    const comment = { user: req.user._id, text, name: req.user.name };
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    const comment = {
+      user: req.user._id,
+      text,
+      name: req.user.name
+    };
+
     blog.comments.push(comment);
     await blog.save();
 
-    res.json({ message: 'Comment added successfully', comment });
+    // Populate the new comment's user field
+    await blog.populate('comments.user', 'name');
+
+    // Get the newly added comment
+    const newComment = blog.comments[blog.comments.length - 1];
+
+    res.json({
+      message: 'Comment added successfully',
+      comment: newComment
+    });
   } catch (error) {
+    console.error('Error adding comment:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update blog (protected)
+router.put('/:id', authMiddleware, upload.single('image'), async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    // Check if user owns the blog
+    if (blog.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to edit this blog' });
+    }
+
+    const { title, description, content, category } = req.body;
+
+    // Update blog fields
+    if (title) blog.title = title;
+    if (description) blog.description = description;
+    if (content) blog.content = content;
+    if (category) blog.category = category;
+
+    // Handle image update
+    if (req.file) {
+      try {
+        // Upload new image to Cloudinary
+        const result = await uploadToCloudinary(req.file.path);
+        
+        // Delete old image from Cloudinary if it exists
+        await deleteFromCloudinary(blog.image);
+        
+        // Add new image data
+        blog.image = {
+          url: result.secure_url,
+          public_id: result.public_id
+        };
+      } catch (uploadError) {
+        console.error('Error uploading to Cloudinary:', uploadError);
+        return res.status(500).json({ message: 'Error uploading image' });
+      }
+    } else if (req.body.removeImage === 'true') {
+      // Delete image from Cloudinary if it exists
+      await deleteFromCloudinary(blog.image);
+      blog.image = undefined;
+    }
+
+    await blog.save();
+    await blog.populate('author', 'name');
+
+    res.json({
+      message: 'Blog updated successfully',
+      blog
+    });
+  } catch (error) {
+    console.error('Error updating blog:', error);
+    
+    // Clean up uploaded file if there was an error
+    if (req.file) {
+      const fs = require('fs');
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) console.error('Error deleting temp file:', unlinkError);
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Delete blog (protected)
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    // Check if user owns the blog
+    if (blog.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this blog' });
+    }
+
+    // Delete image from Cloudinary if it exists
+    await deleteFromCloudinary(blog.image);
+
+    await Blog.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Blog deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting blog:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get blogs by user (optional)
+router.get('/user/my-blogs', authMiddleware, async (req, res) => {
+  try {
+    const blogs = await Blog.find({ author: req.user._id })
+      .populate('author', 'name')
+      .sort({ createdAt: -1 });
+
+    res.json(blogs);
+  } catch (error) {
+    console.error('Error fetching user blogs:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
