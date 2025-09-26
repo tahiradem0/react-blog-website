@@ -24,7 +24,7 @@ const BlogDetail = () => {
   }, [id]);
 
   // Get base URL from environment variable
-  const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL';
+  const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 
   const fetchBlog = async () => {
