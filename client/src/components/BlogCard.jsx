@@ -30,7 +30,7 @@ const BlogCard = ({ blog }) => {
               src={`${API_BASE_URL}/uploads/${blog.image}`} 
               alt={blog.title}
               onError={(e) => {
-                e.target.src = '/default-blog.png';
+                e.target.src = 'https://miro.medium.com/v2/resize:fit:1024/1*GXakTtcSuCidA5FeAAmERw@2x.jpeg';
               }}
             />
           </div>
