@@ -14,16 +14,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configure multer for temporary storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'tmp/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
+// Configure multer for memory storage (no temporary files)
+const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
   limits: {
@@ -42,19 +34,37 @@ const upload = multer({
   }
 });
 
-// Helper function to upload image to Cloudinary
-const uploadToCloudinary = async (filePath) => {
+// Helper function to upload image to Cloudinary from memory buffer
+const uploadToCloudinaryFromBuffer = async (fileBuffer, originalname) => {
   try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: 'blog-images',
-      transformation: [
-        { width: 800, height: 600, crop: 'limit' },
-        { quality: 'auto' }
-      ]
+    console.log('Uploading to Cloudinary from buffer...');
+    
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'blog-images',
+          transformation: [
+            { width: 800, height: 600, crop: 'limit' },
+            { quality: 'auto' }
+          ],
+          public_id: `blog_${Date.now()}_${path.parse(originalname).name}`
+        },
+        (error, result) => {
+          if (error) {
+            console.error('Cloudinary stream error:', error);
+            reject(error);
+          } else {
+            console.log('Cloudinary upload successful:', result.secure_url);
+            resolve(result);
+          }
+        }
+      );
+      
+      stream.end(fileBuffer);
     });
-    return result;
   } catch (error) {
-    throw new Error('Failed to upload image to Cloudinary');
+    console.error('Cloudinary upload error:', error);
+    throw new Error(`Failed to upload image to Cloudinary: ${error.message}`);
   }
 };
 
@@ -78,6 +88,31 @@ const deleteFromCloudinary = async (image) => {
     console.error('Error deleting image from Cloudinary:', error);
   }
 };
+
+// Test Cloudinary connection endpoint
+router.get('/test/cloudinary', async (req, res) => {
+  try {
+    // Test Cloudinary connection
+    const result = await cloudinary.api.ping();
+    console.log('Cloudinary ping result:', result);
+    
+    res.json({ 
+      message: 'Cloudinary connection test',
+      cloudinary: result,
+      config: {
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Not set',
+        api_key: process.env.CLOUDINARY_API_KEY ? 'Set' : 'Not set',
+        api_secret: process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Not set'
+      }
+    });
+  } catch (error) {
+    console.error('Cloudinary test error:', error);
+    res.status(500).json({ 
+      message: 'Cloudinary test failed',
+      error: error.message 
+    });
+  }
+});
 
 // Get all blogs with search and category filter
 router.get('/', async (req, res) => {
@@ -125,13 +160,17 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create blog (protected)
+// Create blog (protected) - UPDATED WITH MEMORY BUFFER
 router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     console.log('Request received for blog creation');
     console.log('Request body:', req.body);
-    console.log('Request file:', req.file);
-    console.log('User:', req.user);
+    console.log('Request file info:', req.file ? {
+      originalname: req.file.originalname,
+      size: req.file.size,
+      mimetype: req.file.mimetype,
+      bufferLength: req.file.buffer.length
+    } : 'No file');
 
     const { title, description, content, category } = req.body;
 
@@ -149,12 +188,11 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       author: req.user._id
     };
 
-    // If image was uploaded, upload to Cloudinary
+    // If image was uploaded, upload to Cloudinary from memory buffer
     if (req.file) {
-      console.log('Image file detected, uploading to Cloudinary...');
+      console.log('Image file detected, uploading to Cloudinary from buffer...');
       try {
-        const result = await uploadToCloudinary(req.file.path);
-        console.log('Cloudinary upload result:', result);
+        const result = await uploadToCloudinaryFromBuffer(req.file.buffer, req.file.originalname);
         
         blogData.image = {
           url: result.secure_url,
@@ -162,7 +200,10 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         };
       } catch (uploadError) {
         console.error('Error uploading to Cloudinary:', uploadError);
-        return res.status(500).json({ message: 'Error uploading image' });
+        return res.status(500).json({ 
+          message: 'Error uploading image to Cloudinary',
+          details: process.env.NODE_ENV === 'development' ? uploadError.message : undefined
+        });
       }
     } else {
       console.log('No image file detected');
@@ -179,14 +220,6 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating blog:', error);
-    
-    // Clean up uploaded file if there was an error
-    if (req.file) {
-      const fs = require('fs');
-      fs.unlink(req.file.path, (unlinkError) => {
-        if (unlinkError) console.error('Error deleting temp file:', unlinkError);
-      });
-    }
     
     res.status(500).json({ 
       message: 'Server error',
@@ -264,7 +297,7 @@ router.post('/:id/comment', authMiddleware, async (req, res) => {
   }
 });
 
-// Update blog (protected)
+// Update blog (protected) - UPDATED WITH MEMORY BUFFER
 router.put('/:id', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -289,8 +322,8 @@ router.put('/:id', authMiddleware, upload.single('image'), async (req, res) => {
     // Handle image update
     if (req.file) {
       try {
-        // Upload new image to Cloudinary
-        const result = await uploadToCloudinary(req.file.path);
+        // Upload new image to Cloudinary from memory buffer
+        const result = await uploadToCloudinaryFromBuffer(req.file.buffer, req.file.originalname);
         
         // Delete old image from Cloudinary if it exists
         await deleteFromCloudinary(blog.image);
@@ -319,14 +352,6 @@ router.put('/:id', authMiddleware, upload.single('image'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating blog:', error);
-    
-    // Clean up uploaded file if there was an error
-    if (req.file) {
-      const fs = require('fs');
-      fs.unlink(req.file.path, (unlinkError) => {
-        if (unlinkError) console.error('Error deleting temp file:', unlinkError);
-      });
-    }
     
     res.status(500).json({ 
       message: 'Server error',
